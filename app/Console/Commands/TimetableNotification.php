@@ -7,6 +7,8 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
+use App\Mail\Timetable;
+use Illuminate\Support\Facades\Mail;
 
 #[Signature('app:timetable-notification')]
 #[Description('Send timetable notifications')]
@@ -41,6 +43,12 @@ class TimetableNotification extends Command
     ->sortBy(['date', 'timeStart'])
     ->groupBy(fn ($event) => Carbon::parse($event['date'])->locale('et')->dayName);
 
-    dd($timetableEvents);
+    Mail::to('test@example.com')->send(
+    new Timetable($timetableEvents, $startDate, $endDate)
+);
+
+$this->info('Timetable email sent!');
+
+return self::SUCCESS;
     }
 }
